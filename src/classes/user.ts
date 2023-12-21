@@ -1,15 +1,18 @@
 import prisma from '../utils/database';
+import bcrypt from "bcrypt";
 
 export class User {
     id: number;
     name: string;
     email: string;
+    password: string;
     active: boolean;
 
-    constructor(id: number, name: string, email: string, active: boolean) {
+    constructor(id: number, name: string, email: string, password: string, active: boolean) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.active = active;
     }
 
@@ -23,6 +26,7 @@ export class User {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                password: user.password,
                 active: user.active
             }));
         } catch (error) {
@@ -39,10 +43,12 @@ export class User {
                 },
             });
             if (existingUser) {
+                const encryptdPassword = await bcrypt.hash(existingUser.password, 10);
                 return {
                     id: existingUser.id,
                     name: existingUser.name,
                     email: existingUser.email,
+                    password: encryptdPassword,
                     active: existingUser.active
                 };
             } else {
@@ -54,20 +60,23 @@ export class User {
             throw new Error("Failed to create user");
         }
     }
-    public static async createUser(name: string, email: string): Promise<User> {
+    public static async createUser(name: string, email: string, password: string): Promise<User> {
         try {
+            const encryptdPassword = await bcrypt.hash(password, 10);
             const newUser = await prisma.user.create(
                 {
                     data: {
                         name: name,
                         email: email,
                         active: true,
+                        password: encryptdPassword,
                     }
                 });
             return {
                 id: newUser.id,
                 name: newUser.name,
                 email: newUser.email,
+                password: encryptdPassword,
                 active: newUser.active
             };
         } catch (error) {
@@ -75,7 +84,7 @@ export class User {
             throw new Error("Failed to create user");
         }
     }
-    public static async updateUser(id: number, name: string, email: string, active: boolean): Promise<User | null> {
+    public static async updateUser(id: number, name: string, email: string, password: string,active: boolean): Promise<User | null> {
         try {
             const existingUser = await prisma.user.findUnique({
                 where: {
@@ -83,6 +92,7 @@ export class User {
                 },
             });
             if (existingUser) {
+                const encryptdPassword = await bcrypt.hash(password, 10);
                 const updatedUser = await prisma.user.update({
                     where: {
                         id: id,
@@ -90,6 +100,7 @@ export class User {
                     data: {
                         name: name,
                         email: email,
+                        password: encryptdPassword,
                         active: active,
                     },
                 });
@@ -97,6 +108,7 @@ export class User {
                     id: updatedUser.id,
                     name: updatedUser.name,
                     email: updatedUser.email,
+                    password: encryptdPassword,
                     active: updatedUser.active,
                 };
             } else {

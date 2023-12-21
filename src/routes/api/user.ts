@@ -26,9 +26,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req, res) => {
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
     try {
-        const newUser = await User.createUser(name, email);
+        const newUser = await User.createUser(name, email, password);
         return res.status(201).send(newUser);
     } catch (e) {
         res.status(500).send('Internal server error');
@@ -36,10 +36,10 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-    const { name, email, active } = req.body;
+    const { name, email, password, active } = req.body;
     try {
         const userId = parseInt(req.params.id, 10);
-        const user = await User.updateUser(userId, name, email, active);
+        const user = await User.updateUser(userId, name, email, password, active);
         return res.status(200).send(user);
     } catch (e) {
         res.status(500).send('Internal server error');
