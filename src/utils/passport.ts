@@ -7,7 +7,7 @@ const opts = {
 };
 
 passport.use(
-    new Strategy(opts, (jwt_payload, done) => {
+    new Strategy(opts, async (jwt_payload, done) => {
         if (jwt_payload.user) {
             return done(null, jwt_payload.user);
         }

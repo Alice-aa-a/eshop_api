@@ -15,7 +15,6 @@ router.post("/signin", async (req, res) => {
         const user = await prisma.user.findUnique({
             where: {
                 email: email,
-                password: password,
             },
         });
         if (!user) {

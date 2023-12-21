@@ -3,20 +3,12 @@ import prisma from "./utils/database";
 import api from "./routes/api";
 import { rateLimit } from 'express-rate-limit';
 import 'dotenv/config'
-import './utils/passport.js';
+import './utils/passport';
 import passport from "passport";
+import 'dotenv/config';
 
-const app = express()
-const port = 3000
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-})
-
-// Apply the rate limiting middleware to all requests.
 async function main() {
+    const app = express()
     app.use(passport.initialize());
     app.get(
         "/protected",
@@ -26,6 +18,13 @@ async function main() {
             res.send("Vous êtes bien connecté !");
         }
     );
+    const port = 3000
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000,
+        limit: 100,
+        standardHeaders: true,
+        legacyHeaders: false,
+    })
     app.use(limiter)
     app.use(express.json());
     app.use("/api", api);
