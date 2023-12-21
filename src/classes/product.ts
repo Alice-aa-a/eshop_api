@@ -25,4 +25,23 @@ export class Product {
             throw new Error("Failed to fetch products");
         }
     }
+    public static async createProduct(name: string, price: number): Promise<Product> {
+        try {
+            const newProduct = await prisma.product.create(
+                {
+                    data: {
+                        name: name,
+                        price: price,
+                    }
+                });
+            return {
+                id: newProduct.id,
+                name: newProduct.name,
+                price: newProduct.price,
+            };
+        } catch (error) {
+            console.error("Error creating product:", error);
+            throw new Error("Failed to create product");
+        }
+    }
 }

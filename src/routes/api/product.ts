@@ -16,14 +16,10 @@ router.get("/", async (req: Request, res: Response) => {
 
 
 router.post("/", async (req, res) => {
-    const { title, content, userId } = req.body;
+    const { name, price } = req.body;
     try {
-        // const newProduct = await Product.create({
-        //     title,
-        //     content,
-        //     user: userId,
-        // });
-        // res.status(201).send(newProduct);
+        const newProduct = await Product.createProduct(name, price);
+        return res.status(201).send(newProduct);
     } catch (e) {
         res.status(500).send('Internal server error');
     }
