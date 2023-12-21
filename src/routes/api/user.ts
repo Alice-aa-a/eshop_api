@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import {User} from "../../classes/user";
+import {validateAuthInputs} from "../../utils/middleware";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateAuthInputs, async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
     try {
         const newUser = await User.createUser(name, email, password);
@@ -35,7 +36,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", validateAuthInputs, async (req: Request, res: Response) => {
     const { name, email, password, active } = req.body;
     try {
         const userId = parseInt(req.params.id, 10);

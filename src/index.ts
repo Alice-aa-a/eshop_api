@@ -6,6 +6,7 @@ import 'dotenv/config'
 import './utils/passport';
 import passport from "passport";
 import 'dotenv/config';
+import {errorHandler} from "./utils/middleware";
 
 async function main() {
     const app = express()
@@ -28,6 +29,7 @@ async function main() {
     app.use(limiter)
     app.use(express.json());
     app.use("/api", api);
+    app.use(errorHandler);
     app.listen(port, () => {
         console.log(`Server is running on http://localhost:${port}`);
     });
