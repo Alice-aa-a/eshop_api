@@ -27,7 +27,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./build/index.js",
     "dev": "nodemon -L -e ts --exec \"npm run build && npm start\"",
-    "build": "tsc"
+    "build": "tsc",
+    "buildtest": "rm -rf build && tsc"
   },
   "author": "",
   "license": "ISC",
