@@ -43,8 +43,8 @@ export class Product {
                 return null;
             }
         } catch (error) {
-            console.error("Error creating product:", error);
-            throw new Error("Failed to create product");
+            console.error("Error fetching product:", error);
+            throw new Error("Failed to fetch product");
         }
     }
     public static async createProduct(name: string, price: number): Promise<Product> {
@@ -97,7 +97,6 @@ export class Product {
             throw new Error("Failed to update product");
         }
     }
-
     public static async deleteProduct(productId: number): Promise<void> {
         try {
             const product = await prisma.product.findUnique({
