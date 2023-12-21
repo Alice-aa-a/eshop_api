@@ -36,10 +36,10 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-    const { name, email } = req.body;
+    const { name, email, active } = req.body;
     try {
         const userId = parseInt(req.params.id, 10);
-        const user = await User.updateUser(userId, name, email);
+        const user = await User.updateUser(userId, name, email, active);
         return res.status(200).send(user);
     } catch (e) {
         res.status(500).send('Internal server error');

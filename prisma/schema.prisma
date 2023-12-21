@@ -13,9 +13,7 @@ datasource db {
 model Order {
   id           Int            @id @default(autoincrement())
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
   title        String         @db.VarChar(255)
-  content      String?
   userId       Int
   user         User           @relation(fields: [userId], references: [id])
   OrderProduct OrderProduct[]
@@ -25,6 +23,7 @@ model User {
   id     Int     @id @default(autoincrement())
   name   String
   email  String  @unique
+  active Boolean @default(true)
   orders Order[]
 }
 
@@ -37,9 +36,9 @@ model Product {
 
 model OrderProduct {
   orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Restrict)
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
   quantity  Int
 
   @@id([orderId, productId])
