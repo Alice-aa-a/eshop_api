@@ -26,9 +26,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req, res) => {
-    const { name, price } = req.body;
+    const { name, email } = req.body;
     try {
-        const newUser = await User.createUser(name, price);
+        const newUser = await User.createUser(name, email);
         return res.status(201).send(newUser);
     } catch (e) {
         res.status(500).send('Internal server error');
