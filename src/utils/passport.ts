@@ -1,17 +1,27 @@
 import passport from "passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import prisma from "./database";
 
-const opts = {
+const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET,
 };
 
 passport.use(
-    new Strategy(opts, async (jwt_payload, done) => {
-        if (jwt_payload.user) {
-            return done(null, jwt_payload.user);
+    new Strategy(jwtOptions, async (jwtPayload, done) => {
+        try {
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: jwtPayload.userId,
+                },
+            });
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
+        } catch (error) {
+            return done(error, false);
         }
-
-        return done(null, false);
     })
 );

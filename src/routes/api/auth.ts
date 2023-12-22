@@ -21,14 +21,12 @@ router.post("/signin", validateAuthInputs, async (req: Request, res: Response) =
         if (!user) {
             return res.status(401).send({ error: "Invalid email or password" });
         }
-
         const isSamePassword = await bcrypt.compare(password, user.password);
-
         if (!isSamePassword) {
             return res.status(401).send({ error: "Invalid email or password" });
         }
         const token = jwt.sign({ userId: user.id, roleuser: user.roleuser }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        return res.status(200).send({ token });
+        return res.status(200).send({ token, user });
     } catch (error) {
         console.error(error);
         return res.status(500).send({ error: "Internal Server Error" });

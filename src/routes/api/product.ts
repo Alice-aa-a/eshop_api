@@ -5,7 +5,7 @@ import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
 
-router.get("/", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
+router.get("/", authorizeRole(['CLIENT', 'GESTIONNAIRE', 'ADMINISTRATEUR']), async (req: Request, res: Response) => {
     // http://127.0.0.1:3000/api/products/
     try {
         const products: Product[] = await Product.getAllProducts();

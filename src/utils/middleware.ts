@@ -24,9 +24,12 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
 export const authorizeRole = (allowedRoles: Roleuser[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const user = req.user as User;
-        if (user && allowedRoles.includes(user.roleuser)) {
+        // console.log('User Role:', user ? user.roleuser : 'Not authenticated');
+        // console.log('Allowed Roles:', allowedRoles);
+        if (user && user.roleuser && allowedRoles.includes(user.roleuser)) {
             next();
         } else {
+            console.log('Role not allowed');
             res.status(403).json({ error: 'Forbidden' });
         }
     };

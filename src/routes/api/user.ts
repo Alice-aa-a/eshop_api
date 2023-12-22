@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import {User} from "../../classes/user";
-import {authorizeRole, validateAuthInputs} from "../../utils/middleware";
+import {validateAuthInputs, authorizeRole} from "../../utils/middleware";
 import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
