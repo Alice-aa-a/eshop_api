@@ -7,10 +7,15 @@ import './utils/passport';
 import passport from "passport";
 import 'dotenv/config';
 import {errorHandler} from "./utils/middleware";
+import cors from 'cors';
+import helmet from 'helmet';
 
 async function main() {
     const app = express()
     app.use(passport.initialize());
+    app.get("/", (req, res) => {
+        res.send("Bienvenue !");
+    });
     app.get(
         "/protected",
         passport.authenticate("jwt", { session: false }),
@@ -28,6 +33,8 @@ async function main() {
     })
     app.use(limiter)
     app.use(express.json());
+    app.use(cors());
+    app.use(helmet());
     app.use("/api", api);
     app.use(errorHandler);
     app.listen(port, () => {

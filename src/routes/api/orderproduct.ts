@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
 import {Orderproduct} from "../../classes/orderproduct";
+import {authorizeRole} from "../../utils/middleware";
+import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     // http://127.0.0.1:3000/api/orderproducts/
     try {
         const orderproducts: Orderproduct[] = await Orderproduct.getAllOrderProducts();
@@ -14,7 +16,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 });
 
-router.get("/:orderId/:productId", async (req: Request, res: Response) => {
+router.get("/:orderId/:productId", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const orderId = parseInt(req.params.orderId, 10);
         const productId = parseInt(req.params.productId, 10);
@@ -26,7 +28,7 @@ router.get("/:orderId/:productId", async (req: Request, res: Response) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { orderId, productId, quantity } = req.body;
     try {
         const newOrderproduct = await Orderproduct.createOrderProduct(orderId, productId, quantity);
@@ -36,11 +38,9 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:orderId/:productId", async (req, res) => {
+router.put("/:orderId/:productId", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { orderId, productId, quantity } = req.body;
     try {
-        const orderId = parseInt(req.params.orderId, 10);
-        const productId = parseInt(req.params.productId, 10);
         const orderproduct = await Orderproduct.updateOrderProduct(orderId, productId, quantity);
         return res.status(200).send(orderproduct);
     } catch (e) {
@@ -48,7 +48,7 @@ router.put("/:orderId/:productId", async (req, res) => {
     }
 });
 
-router.delete("/:orderId/:productId", async (req: Request, res: Response) => {
+router.delete("/:orderId/:productId", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const orderId = parseInt(req.params.orderId, 10);
         const productId = parseInt(req.params.productId, 10);

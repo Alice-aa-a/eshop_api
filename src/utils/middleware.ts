@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult, body } from 'express-validator';
+import { Roleuser } from '@prisma/client';
+import {User} from "../classes/user";
 
 export const validateAuthInputs = [
     body('email').notEmpty().withMessage('Le email est requis'),
@@ -18,4 +20,14 @@ export const validateAuthInputs = [
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
+};
+export const authorizeRole = (allowedRoles: Roleuser[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const user = req.user as User;
+        if (user && allowedRoles.includes(user.roleuser)) {
+            next();
+        } else {
+            res.status(403).json({ error: 'Forbidden' });
+        }
+    };
 };

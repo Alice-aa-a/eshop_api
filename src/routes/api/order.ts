@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
 import {Order} from "../../classes/order";
+import {authorizeRole} from "../../utils/middleware";
+import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     // http://127.0.0.1:3000/api/orders/
     try {
         const orders: Order[] = await Order.getAllOrders();
@@ -14,7 +16,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const orderId = parseInt(req.params.id, 10);
         const order = await Order.getOrder(orderId);
@@ -25,7 +27,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { title, userId } = req.body;
     try {
         const newOrder = await Order.createOrder(title, userId);
@@ -35,7 +37,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { title, userId } = req.body;
     try {
         const orderId = parseInt(req.params.id, 10);
@@ -46,7 +48,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.id, 10);
         await Order.deleteOrder(userId);

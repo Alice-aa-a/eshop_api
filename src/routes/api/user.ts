@@ -1,10 +1,11 @@
 import express, { Request, Response } from 'express';
 import {User} from "../../classes/user";
-import {validateAuthInputs} from "../../utils/middleware";
+import {authorizeRole, validateAuthInputs} from "../../utils/middleware";
+import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authorizeRole([Roleuser.ADMINISTRATEUR]),async (req: Request, res: Response) => {
     // http://127.0.0.1:3000/api/users/
     try {
         const users: User[] = await User.getAllUsers();
@@ -15,7 +16,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authorizeRole([Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.id, 10);
         const user = await User.getUser(userId);
@@ -27,9 +28,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", validateAuthInputs, async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, roleuser } = req.body;
     try {
-        const newUser = await User.createUser(name, email, password);
+        const newUser = await User.createUser(name, email, password, roleuser);
         return res.status(201).send(newUser);
     } catch (e) {
         res.status(500).send('Internal server error');
@@ -37,17 +38,17 @@ router.post("/", validateAuthInputs, async (req: Request, res: Response) => {
 });
 
 router.put("/:id", validateAuthInputs, async (req: Request, res: Response) => {
-    const { name, email, password, active } = req.body;
+    const { name, email, password, active, roleuser } = req.body;
     try {
         const userId = parseInt(req.params.id, 10);
-        const user = await User.updateUser(userId, name, email, password, active);
+        const user = await User.updateUser(userId, name, email, password, active, roleuser);
         return res.status(200).send(user);
     } catch (e) {
         res.status(500).send('Internal server error');
     }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", authorizeRole([Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.id, 10);
         await User.deleteUser(userId);

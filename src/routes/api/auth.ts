@@ -27,9 +27,7 @@ router.post("/signin", validateAuthInputs, async (req: Request, res: Response) =
         if (!isSamePassword) {
             return res.status(401).send({ error: "Invalid email or password" });
         }
-        const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-            expiresIn: "1h",
-        });
+        const token = jwt.sign({ userId: user.id, roleuser: user.roleuser }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return res.status(200).send({ token });
     } catch (error) {
         console.error(error);
@@ -38,9 +36,9 @@ router.post("/signin", validateAuthInputs, async (req: Request, res: Response) =
 });
 
 router.post("/signup", validateAuthInputs, async (req: Request, res: Response) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, roleuser } = req.body;
     try {
-        const newUser = await User.createUser(name, email, password);
+        const newUser = await User.createUser(name, email, password, roleuser);
         return res.status(201).send(newUser);
     } catch (e) {
         res.status(500).send('Internal server error');

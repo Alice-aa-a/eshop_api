@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
 import {Product} from "../../classes/product";
+import {authorizeRole} from "../../utils/middleware";
+import { Roleuser } from '@prisma/client';
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     // http://127.0.0.1:3000/api/products/
     try {
         const products: Product[] = await Product.getAllProducts();
@@ -14,7 +16,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authorizeRole([Roleuser.CLIENT, Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const productId = parseInt(req.params.id, 10);
         const product= await Product.getProduct(productId);
@@ -25,7 +27,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { name, price } = req.body;
     try {
         const newProduct = await Product.createProduct(name, price);
@@ -35,7 +37,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req, res) => {
     const { name, price } = req.body;
     try {
         const productId = parseInt(req.params.id, 10);
@@ -46,7 +48,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", authorizeRole([Roleuser.GESTIONNAIRE, Roleuser.ADMINISTRATEUR]), async (req: Request, res: Response) => {
     try {
         const productId = parseInt(req.params.id, 10);
         await Product.deleteProduct(productId);

@@ -19,13 +19,20 @@ model Order {
   OrderProduct OrderProduct[]
 }
 
+enum Roleuser {
+  CLIENT
+  GESTIONNAIRE
+  ADMINISTRATEUR
+}
+
 model User {
-  id       Int     @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   name     String
-  email    String  @unique
+  email    String   @unique
   password String
-  active   Boolean @default(true)
+  active   Boolean  @default(true)
   orders   Order[]
+  roleuser Roleuser @default(CLIENT)
 }
 
 model Product {
