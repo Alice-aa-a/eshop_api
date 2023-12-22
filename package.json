@@ -34,7 +34,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./build/index.js",
-    "dev": "nodemon -L -e ts --exec \"npm run build && npm start\"",
+    "dev": "nodemon -L -e ts --exec \"npx prisma generate && npm run build && npm start\"",
     "build": "tsc",
     "buildtest": "npm run build && npm start"
   },
